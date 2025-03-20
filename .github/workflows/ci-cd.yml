@@ -45,10 +45,12 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.ACR_LOGIN_SERVER }}/health-calculator-app:${{ github.sha }}
+          tags: |
+            ${{ secrets.ACR_LOGIN_SERVER }}/health-calculator-app:${{ github.sha }}
+            ${{ secrets.ACR_LOGIN_SERVER }}/health-calculator-app:latest
       
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'health-calculator-appt'
-          images: ${{ secrets.ACR_LOGIN_SERVER }}/health-calculator-app:${{ github.sha }}
+          app-name: 'health-calculator-app'
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/health-calculator-app:latest
