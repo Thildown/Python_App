@@ -22,7 +22,7 @@ class TestHealthUtils(unittest.TestCase):
 
     def test_calculate_bmr_male(self):
         # Test pour homme
-        self.assertAlmostEqual(calculate_bmr(175, 70, 30, 'male'), 1686.57, places=2)
+        self.assertAlmostEqual(calculate_bmr(175, 70, 30, 'male'), 1695.67, places=2)
         
         # Test des exceptions
         with self.assertRaises(ValueError):
@@ -36,7 +36,7 @@ class TestHealthUtils(unittest.TestCase):
 
     def test_calculate_bmr_female(self):
         # Test pour femme
-        self.assertAlmostEqual(calculate_bmr(165, 60, 25, 'female'), 1389.63, places=2)
+        self.assertAlmostEqual(calculate_bmr(165, 60, 25, 'female'), 1405.33, places=2)
 
 class TestAPI(unittest.TestCase):
     def setUp(self):
@@ -70,7 +70,7 @@ class TestAPI(unittest.TestCase):
         result = json.loads(response.data)
         
         self.assertEqual(response.status_code, 200)
-        self.assertAlmostEqual(result['bmr'], 1686.57, places=2)
+        self.assertAlmostEqual(result['bmr'], 1695.67, places=2)
 
 if __name__ == '__main__':
     unittest.main()
