@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from utils import calculate_monthly_payment, calculate_total_cost
+from health_utils import calculate_bmi, calculate_bmr
 
 app = Flask(__name__)
 
@@ -7,19 +7,43 @@ app = Flask(__name__)
 def home():
     return render_template('home.html')
 
-@app.route('/calculate', methods=['POST'])
-def calculate():
-    loan_amount = float(request.form['loan_amount'])
-    duration_years = int(request.form['duration'])
-    annual_interest_rate = float(request.form['interest_rate'])
-
-    monthly_payment = calculate_monthly_payment(loan_amount, duration_years, annual_interest_rate)
-    total_cost = calculate_total_cost(monthly_payment, duration_years)
-
+@app.route('/bmi', methods=['POST'])
+def bmi():
+    data = request.json
+    height = float(data.get('height', 0))  # height in meters
+    weight = float(data.get('weight', 0))  # weight in kg
+    
+    bmi_result = calculate_bmi(height, weight)
+    
+    # Déterminer la catégorie de BMI
+    category = ""
+    if bmi_result < 18.5:
+        category = "Insuffisance pondérale"
+    elif 18.5 <= bmi_result < 25:
+        category = "Poids normal"
+    elif 25 <= bmi_result < 30:
+        category = "Surpoids"
+    else:
+        category = "Obésité"
+    
     return jsonify({
-        'monthly_payment': monthly_payment,
-        'total_cost': total_cost
+        'bmi': bmi_result,
+        'category': category
+    })
+
+@app.route('/bmr', methods=['POST'])
+def bmr():
+    data = request.json
+    height = float(data.get('height', 0))  # height in cm
+    weight = float(data.get('weight', 0))  # weight in kg
+    age = int(data.get('age', 0))          # age in years
+    gender = data.get('gender', '').lower() # 'male' or 'female'
+    
+    bmr_result = calculate_bmr(height, weight, age, gender)
+    
+    return jsonify({
+        'bmr': bmr_result
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

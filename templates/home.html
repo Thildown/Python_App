@@ -1,53 +1,187 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Calculator</title>
+    <title>Calculateur de Santé</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .container { max-width: 500px; margin: auto; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
-        input[type="number"] { width: 100%; padding: 8px; }
-        button { padding: 10px 20px; background-color: #007BFF; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        .result { margin-top: 20px; font-size: 1.1em; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #f5f5f5;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: auto; 
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .calculator {
+            margin-bottom: 30px;
+        }
+        .input-group { 
+            margin-bottom: 15px; 
+        }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        input[type="number"], select { 
+            width: 100%; 
+            padding: 8px; 
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button { 
+            padding: 10px 20px; 
+            background-color: #3498db; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        button:hover { 
+            background-color: #2980b9; 
+        }
+        .result { 
+            margin-top: 20px; 
+            font-size: 1.1em; 
+            background-color: #eaf2f8;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Loan Calculator</h2>
-        <div class="input-group">
-            <label for="loan_amount">Loan Amount ($)</label>
-            <input type="number" id="loan_amount" name="loan_amount" required>
-        </div>
-        <div class="input-group">
-            <label for="duration">Duration (years)</label>
-            <input type="number" id="duration" name="duration" required>
-        </div>
-        <div class="input-group">
-            <label for="interest_rate">Interest Rate (%)</label>
-            <input type="number" id="interest_rate" name="interest_rate" step="0.01" required>
-        </div>
-        <button onclick="calculateLoan()">Calculate</button>
+        <h2>Calculateur de Santé</h2>
+        
+        <div class="calculator">
+            <h3>Calculateur d'IMC (Indice de Masse Corporelle)</h3>
+            <div class="input-group">
+                <label for="height_bmi">Taille (m)</label>
+                <input type="number" id="height_bmi" name="height_bmi" step="0.01" placeholder="Ex: 1.75" required>
+            </div>
+            <div class="input-group">
+                <label for="weight_bmi">Poids (kg)</label>
+                <input type="number" id="weight_bmi" name="weight_bmi" step="0.1" placeholder="Ex: 70" required>
+            </div>
+            <button onclick="calculateBMI()">Calculer IMC</button>
 
-        <div class="result">
-            <p>Monthly Payment: $<span id="monthly_payment">0.00</span></p>
-            <p>Total Cost of Loan: $<span id="total_cost">0.00</span></p>
+            <div class="result" id="bmi_result_container" style="display: none;">
+                <p>Votre IMC: <span id="bmi_value"></span></p>
+                <p>Catégorie: <span id="bmi_category"></span></p>
+            </div>
+        </div>
+
+        <div class="calculator">
+            <h3>Calculateur de MBR (Métabolisme de Base)</h3>
+            <div class="input-group">
+                <label for="height_bmr">Taille (cm)</label>
+                <input type="number" id="height_bmr" name="height_bmr" step="0.1" placeholder="Ex: 175" required>
+            </div>
+            <div class="input-group">
+                <label for="weight_bmr">Poids (kg)</label>
+                <input type="number" id="weight_bmr" name="weight_bmr" step="0.1" placeholder="Ex: 70" required>
+            </div>
+            <div class="input-group">
+                <label for="age_bmr">Âge (années)</label>
+                <input type="number" id="age_bmr" name="age_bmr" placeholder="Ex: 30" required>
+            </div>
+            <div class="input-group">
+                <label for="gender_bmr">Genre</label>
+                <select id="gender_bmr" name="gender_bmr" required>
+                    <option value="">Sélectionnez</option>
+                    <option value="male">Homme</option>
+                    <option value="female">Femme</option>
+                </select>
+            </div>
+            <button onclick="calculateBMR()">Calculer MBR</button>
+
+            <div class="result" id="bmr_result_container" style="display: none;">
+                <p>Votre Métabolisme de Base: <span id="bmr_value"></span> calories/jour</p>
+                <p>Ce nombre représente les calories dont votre corps a besoin au repos pour maintenir ses fonctions vitales.</p>
+            </div>
         </div>
     </div>
 
     <script>
-        function calculateLoan() {
-            const loan_amount = parseFloat(document.getElementById('loan_amount').value);
-            const duration = parseInt(document.getElementById('duration').value);
-            const interest_rate = parseFloat(document.getElementById('interest_rate').value);
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('height_bmi').value);
+            const weight = parseFloat(document.getElementById('weight_bmi').value);
 
-            $.post('/calculate', { loan_amount, duration, interest_rate }, function(data) {
-                $('#monthly_payment').text(data.monthly_payment.toFixed(2));
-                $('#total_cost').text(data.total_cost.toFixed(2));
+            if (!height || !weight || height <= 0 || weight <= 0) {
+                alert("Veuillez entrer des valeurs valides pour la taille et le poids.");
+                return;
+            }
+
+            const data = {
+                height: height,
+                weight: weight
+            };
+
+            $.ajax({
+                url: '/bmi',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    $('#bmi_value').text(response.bmi.toFixed(2));
+                    $('#bmi_category').text(response.category);
+                    $('#bmi_result_container').show();
+                },
+                error: function(xhr, status, error) {
+                    alert("Une erreur s'est produite: " + error);
+                }
+            });
+        }
+
+        function calculateBMR() {
+            const height = parseFloat(document.getElementById('height_bmr').value);
+            const weight = parseFloat(document.getElementById('weight_bmr').value);
+            const age = parseInt(document.getElementById('age_bmr').value);
+            const gender = document.getElementById('gender_bmr').value;
+
+            if (!height || !weight || !age || !gender || height <= 0 || weight <= 0 || age <= 0) {
+                alert("Veuillez remplir tous les champs avec des valeurs valides.");
+                return;
+            }
+
+            const data = {
+                height: height,
+                weight: weight,
+                age: age,
+                gender: gender
+            };
+
+            $.ajax({
+                url: '/bmr',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    $('#bmr_value').text(response.bmr.toFixed(2));
+                    $('#bmr_result_container').show();
+                },
+                error: function(xhr, status, error) {
+                    alert("Une erreur s'est produite: " + error);
+                }
             });
         }
     </script>
