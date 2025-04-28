@@ -291,14 +291,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Expose le port 5000 explicitement
-EXPOSE 5000
+# Expose le port 5001
+EXPOSE 5001
 
 # Variable d'environnement pour Flask
 ENV FLASK_APP=app.py
-ENV PORT=5000
+ENV PORT=5001
 
 # Commande de démarrage avec gunicorn pour la production
-CMD gunicorn --bind 0.0.0.0:5000 app:app
+CMD gunicorn --bind 0.0.0.0:5001 app:app
 ```
 
