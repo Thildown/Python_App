@@ -72,7 +72,7 @@ MBR = 447.593 + (9.247 × poids (kg)) + (3.098 × taille (cm)) - (4.330 × âge 
 
 1. **Cloner le dépôt**
    ```bash
-   git clone https://github.com/votre-nom/health-calculator-service.git
+   git clone https://github.com/Thildown/Python_App.git
    cd health-calculator-service
    ```
 
