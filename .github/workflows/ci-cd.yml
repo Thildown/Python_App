@@ -52,5 +52,5 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'health-calculator-app'
+          app-name: 'health-calculator-appt'
           images: ${{ secrets.ACR_LOGIN_SERVER }}/health-calculator-app:latest
